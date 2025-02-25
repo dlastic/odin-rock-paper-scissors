@@ -1,3 +1,9 @@
+const buttons = document.querySelectorAll("button");
+const resultsDiv = document.querySelector("#results");
+const playerSpan = document.querySelector("#player-score");
+const computerSpan = document.querySelector("#computer-score");
+let scores = { human: 0, computer: 0};
+
 function getComputerChoice() {
   let choices = ["rock", "paper", "scissors"];
   let index = Math.floor(Math.random() * 3);
@@ -29,13 +35,10 @@ function getHumanChoice() {
 }
 
 function declareWinner(humanScore, computerScore) {
-  console.log("\n--- Final Results ---")
   if (humanScore > computerScore) {
-    console.log(`🎉 You win ${humanScore} to ${computerScore}!`);
-  } else if (humanScore < computerScore) {
-    console.log(`😞 You lose ${humanScore} to ${computerScore}!`);
+    resultsDiv.textContent = `Final Results: 🎉 You win ${humanScore} to ${computerScore}!`;
   } else {
-    console.log(`🤝 It is a tie (${humanScore} to ${computerScore})!`)
+    resultsDiv.textContent = `Final Results: 😞 You lose ${humanScore} to ${computerScore}!`;
   }
 }
 
@@ -47,29 +50,22 @@ function playRound(humanChoice, computerChoice, scores) {
   };
 
   if (humanChoice === computerChoice) {
-    console.log("It's a tie!");
+    resultsDiv.textContent = "It's a tie!";
   } else if (winConditions[humanChoice] === computerChoice) {
-    console.log(`You win! ${humanChoice} beats ${computerChoice}`);
+    resultsDiv.textContent = `You win! ${humanChoice} beats ${computerChoice}`;
     scores.human++;
+    playerSpan.textContent = `${scores.human}`;
   } else {
-    console.log(`You lose! ${computerChoice} beats ${humanChoice}`);
+    resultsDiv.textContent = `You lose! ${computerChoice} beats ${humanChoice}`;
     scores.computer++;
+    computerSpan.textContent = `${scores.computer}`;
+  }
+
+  if (scores.human === 5 || scores.computer === 5) {
+    declareWinner(scores.human, scores.computer);
   }
 }
 
-function playGame() {
-  let scores = { human: 0, computer: 0};
-
-  for (let i = 0; i < 5; i++) {
-    console.log(`\n--- Round ${i + 1} ---`);
-    const humanChoice = getHumanChoice();
-    const computerChoice = getComputerChoice();
-    console.log(`You chose: ${humanChoice}`);
-    console.log(`Computer chose: ${computerChoice}`);
-    playRound(humanChoice, computerChoice, scores);
-  }
-
-  declareWinner(scores.human, scores.computer);
-}
-
-playGame()
+buttons.forEach(button => {
+  button.addEventListener("click", () => playRound(button.id, getComputerChoice(), scores))
+});
